@@ -15,21 +15,21 @@
     // Knk Library Klasse hat alle Nötige Funktionen zum Lesen der Webservices und enthält weitere nötigen Tools.
     class knkLibrary{
         private $config;
+
         //Konstruktor
         function __constructor(){
-
+            $this->config = "lib/knk_config.ini";
         }
 
-        //Private Funtion der beim Initialisieren der Klasse Ausgeführt wird
-        private function init(){
-
-        }
-
-        //Configurations Datei
+        /******************************* 
+                *KONFIGURATION*
+        *******************************/
+        //Diese Funktion lies die Config datei und gibt es uns als Array zurück
         public function GetConfig(){
             return parse_ini_file("lib/knk_config.ini");       
         }
 
+        //Diese Funktion modifiert die Config Datei
         public function write_php_ini($array, $file){
             $res = array();
             foreach($array as $key => $val)
@@ -64,8 +64,11 @@
         
         }
 
-        //funKtion zum Auslesen der Webservices
-        public function Get_projects(){
+       /******************************* 
+                *WEBSERVICES*
+        *******************************/
+        //Funktion holt alle Projekte aus KNK Verlag heraus 
+        public function GetProjects(){
             stream_wrapper_unregister('http'); 
             stream_wrapper_register('http', 'NTLMStream') or die("Failed to register protocol");
             $link = $this->GetConfig()['project'];
@@ -80,14 +83,15 @@
            
         }
 
-        public function GetProjectById($id){
+        ////Funktion holt Projekt mit bestimmte ID aus KNK Verlag heraus 
+        public function GetProjectByNo($no){
             stream_wrapper_unregister('http'); 
             stream_wrapper_register('http', 'NTLMStream') or die("Failed to register protocol");
             $link = $this->GetConfig()['project'];
             if( !$link==''){
                 $params = array("filter" => array( 
                     array("Field" => "No", 
-                    "Criteria" => $id)), 
+                    "Criteria" => $no)), 
                     "setSize" => 1
                     ); 
                 $WS = new NTLMSoapClient($link);
@@ -99,12 +103,11 @@
             }
         }
 
+        //Funktion holt alle Projektbeteiligten aus KNK Verlag heraus 
         public function GetParticipantsByProject($projectNo){
             stream_wrapper_unregister('http'); 
             stream_wrapper_register('http', 'NTLMStream') or die("Failed to register protocol");
-            $link = $this->GetConfig()['participants'];
-  
-           
+            $link = $this->GetConfig()['participants'];   
             if( !$link==''){
                 $params = array("filter" => array( 
                     array("Field" => "Project_No", 
@@ -120,57 +123,75 @@
             }
         }
 
-
-        public function Read_Services($url){
-            // we unregister the current HTTP wrapper 
-            
-            //print_r($project);
-
-
-            //$data_array = json_decode(implode($result['ReadMultiple_Result']),TRUE);
-            //$result = $data_array['value'];
-
-            //foreach($result  as $customer) { 
-            //  echo $customer['Main_Title'].'<br>'; 
-            //} 
-
-
-            return $data;
-        }
-
-        Public function Read_Service_With_Parameter(){
-
-        } 
-
-        /****************************** 
-                * DB FUNKTIONEN*
+        /******************************* 
+                    *Content*
         *******************************/
+        //Diese Funktion erzeugt eine Raster mit Alle Projekte für die Front End der Plugin
+        public function ProjectsGrid(){
+            $grid ='';
+            $projects = $this->GetProjects();
+            if(!empty($projects)){
+                foreach($projects as $project){
+                    $grid .= $this->SetProjectGrid($project); 
+                }
+            }
+            echo $grid;
+        }
+        
+        //DieseFunktion erzeugt eine Projektkarte mit weiteren Informationen
+        public function ProjectCard($no){
+            $card ='<div class="col-md-12">';
+            $project = $this->GetProjectByNo($no);
+            $participants =  $this->GetParticipantsByProject($no);
+            $card .= '<h3>'.$project->Main_Title.'</h3>';
+            $card .= '  <b>Author: </b>'.$project->Author_Name.'</br>
+                        <b>ISBN: </b>'.$project->ISBN_13_Complete.'</br>
+                        <b>Genre: </b>'.$project->Genre_Description.'</br> <hr>';
+            $card .= $this->SetParticipantList($participants);
+            $card .='</div>';
 
-        //Knk DB Löschen
-
-        public function create_db(){
-            
+            echo $card;
         }
 
-        public function delete_db(){
+        //erzeugt Eine Liste mit den Projektbeteiligten
+        private function SetParticipantList($participants){
+            $participant_list='<h5> Projektbeteiligten </h5>';
+            if(!empty($participants)){
+                foreach($participants as $participant){
+                    $participant_list .= '<b>'.$participant->Role_Description.': </b>'.$participant->Name.'<br>';
+                }
+            }
 
+            return $participant_list;
+        }
+        
+        //Erzeugt einzelne Projekt Raster
+        private function SetProjectGrid($project){
+            $title = $project->Main_Title;
+            if(strlen($title)> 50){
+                $title=substr($project->Main_Title,0,50).' ...';
+            }        
+            return '<div class="col-md-3" id="cardformat" style="padding-bottom:10px;">
+                        <div class="card"  style="width: 18rem;">
+                            <div class="card-body">
+                                <div style="height: 70px; width:100%; Color:#003FBE; border-bottom: 1px black;">
+                                    <h6 class="card-title">'.$title.'</h6>
+                                </div>  
+                                <p class="card-text">   
+                                    <b>Author: </b>'.$project->Author_Name.'</br>
+                                    <b>ISBN: </b>'.$project->ISBN_13_Complete.'</br>
+                                    <b>Genre: </b>'.$project->Genre_Description.'</br>       
+                                </p>
+                                <form>
+                                    <input type="hidden" name="Project"  value="'.$project->No.'"/>
+                                    <input type="submit" class="btn btn-outline-dark btn-xs" value="Weiterlesen"/>
+                                </form>
+                            </div>
+                        </div>
+                     </div>';
         }
 
-        //DB Infos Aktualisieren
-        public function update_db($username,$passwort,$project_WS_link,$Participants_WS_link,$Content_WS_Link){
-
-        }
-
-        //DB Infos 
-        public function getDBInformation(){
-
-        }
-
-
-
-
-
-
+       
     }
 ?>
 

@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="de">
-<body> 
 <div class="container-fluid">
     <h2 style="color:#003FBE;">Knk Business Software AG</h2>
     <h4> Knk Projekt Administration</h4>
-    <?php
-    
-    $knk= new KnkLibrary();
-    $config= $knk->GetConfig();
+    <?php   
+        $knk= new KnkLibrary();
+        $config= $knk->GetConfig();
     ?>
     <hr>
     <form>
@@ -22,13 +18,12 @@
             <div class="col-md-1">
             </div>
             <div class="col-md-5">
-                <h5 style="color:#003FBE;"> Webserviceseinrichtung </h5>
+                <h5 style="color:#003FBE;"> Webserviceseinrichtung (SOAP)</h5>
                 <div class="form-group" style="color:#003FBE;">
                     <input type="text" style="color:#003FBE;" class="form-control" placeholder="Projekt Webservices"  value="<?php echo  $config['project'];?>" required><br>
-                    <input type="text" style="color:#003FBE;" class="form-control" placeholder= "Projekt Beteiligte Webservices" required><br>
+                    <input type="text" style="color:#003FBE;" class="form-control" placeholder= "Projekt Beteiligte Webservices"  value="<?php echo  $config['participants'];?>"required><br>
                     <input type="text" style="color:#003FBE;" class="form-control" placeholder="Projekt Content Webservices" required>
                 </div>
-
             </div>
           
             
