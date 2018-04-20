@@ -85,8 +85,13 @@
             stream_wrapper_register('http', 'NTLMStream') or die("Failed to register protocol");
             $link = $this->GetConfig()['project'];
             if( !$link==''){
+                $params = array("filter" => array( 
+                    array("Field" => "No", 
+                    "Criteria" => $id)), 
+                    "setSize" => 1
+                    ); 
                 $WS = new NTLMSoapClient($link);
-                $result = $WS->ReadMultiple(); 
+                $result = $WS->ReadMultiple($params); 
                 $projects =  $result->ReadMultiple_Result->Knk_Project; 
                 return $projects;          
             }else{

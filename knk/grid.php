@@ -1,13 +1,7 @@
 <?php 
 
-if(isset($_GET['Project'])){
-         
-          add_filter('the_title', 'custom_page_title');
-          function custom_page_title() {
-              return $_GET['Project'];
-          }
-      }
 ?>
+
 <html>
 <head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -63,15 +57,28 @@ $participant_list='';
     
     <?php
     
-      if(isset($_GET['Project'])){
-          echo "Project No.:" $_GET['Project'];
-
+      
+      if((isset($_GET['Project']))){
+            $single_project = $KnkLib->GetProjectById($_GET['Project']);
+            $participants = $KnkLib->GetParticipantsByProject($_GET['Project']);
           
+            if(!empty($single_project)){
+              //print_r($single_project);
+              echo '<h3>'.$single_project->Main_Title.'</h3> ';
+            
+            }
+
+            if(!empty($participants)){
+              foreach($participants as $p){
+                echo $p->Role_Description.': '.$p->Name.'<br>';
+              }
+            }
       }else{
-        foreach($projects as $project){
-          echo setgrid($project);
-        }
-      }
+            foreach($projects as $project){
+              echo setgrid($project);
+            }
+          }
+    
       
     
     ?>
