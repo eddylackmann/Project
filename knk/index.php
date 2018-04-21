@@ -68,7 +68,7 @@
                 *WEBSERVICES*
         *******************************/
         //Funktion holt alle Projekte aus KNK Verlag heraus 
-        public function GetProjects(){
+        private function GetProjects(){
             stream_wrapper_unregister('http'); 
             stream_wrapper_register('http', 'NTLMStream') or die("Failed to register protocol");
             $link = $this->GetConfig()['project'];
@@ -84,7 +84,7 @@
         }
 
         ////Funktion holt Projekt mit bestimmte ID aus KNK Verlag heraus 
-        public function GetProjectByNo($no){
+        private function GetProjectByNo($no){
             stream_wrapper_unregister('http'); 
             stream_wrapper_register('http', 'NTLMStream') or die("Failed to register protocol");
             $link = $this->GetConfig()['project'];
@@ -104,7 +104,7 @@
         }
 
         //Funktion holt alle Projektbeteiligten aus KNK Verlag heraus 
-        public function GetParticipantsByProject($projectNo){
+        private function GetParticipantsByProject($projectNo){
             stream_wrapper_unregister('http'); 
             stream_wrapper_register('http', 'NTLMStream') or die("Failed to register protocol");
             $link = $this->GetConfig()['participants'];   
@@ -156,12 +156,29 @@
         //erzeugt Eine Liste mit den Projektbeteiligten
         private function SetParticipantList($participants){
             $participant_list='<h5> Projektbeteiligten </h5>';
+            $participant_list.= '<table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Role</th>
+                <th scope="col">Name</th>
+              </tr>
+            </thead>
+            <tbody>   
+            ';
             if(!empty($participants)){
                 foreach($participants as $participant){
-                    $participant_list .= '<b>'.$participant->Role_Description.': </b>'.$participant->Name.'<br>';
+                    //$participant_list .= '<b>'.$participant->Role_Description.': </b>'.$participant->Name.'<br>';
+                    $participant_list .='<tr>
+                                            <th scope="row">1</th>
+                                            <td><b>'.$participant->Role_Description.'</b></td>
+                                            <td>'.$participant->Name.'</td>
+                                        </tr>';
                 }
             }
 
+            $participant_list .= '</tbody>
+                                </table>';
             return $participant_list;
         }
         
@@ -171,8 +188,8 @@
             if(strlen($title)> 50){
                 $title=substr($project->Main_Title,0,50).' ...';
             }        
-            return '<div class="col-md-3" id="cardformat" style="padding-bottom:10px;">
-                        <div class="card"  style="width: 18rem;">
+            return '<div class="col-md-3" id="cardformat" style="padding-bottom:10px; ">
+                        <div class="card"  style="width: 90%;">
                             <div class="card-body">
                                 <div style="height: 70px; width:100%; Color:#003FBE; border-bottom: 1px black;">
                                     <h6 class="card-title">'.$title.'</h6>
