@@ -9,24 +9,53 @@
 */
 
     //Import All Libraries
+    require_once('lib/ini.php'); 
     require_once('lib/config.php'); 
     require_once('lib/NTLMSoapClient.php'); 
     require_once('lib/NTLMStream.php'); 
     // Knk Library Klasse hat alle Nötige Funktionen zum Lesen der Webservices und enthält weitere nötigen Tools.
     class knkLibrary{
-        private $config;
+        private $confg;
 
         //Konstruktor
         function __constructor(){
-            $this->config = "lib/knk_config.ini";
+            $this->confg = new INI("lib/knk_config.ini");
+           
         }
 
         /******************************* 
                 *KONFIGURATION*
         *******************************/
         //Diese Funktion lies die Config datei und gibt es uns als Array zurück
+        public function UpdateConfig($user,$password,$project_link,$participant_link){
+           // $this->confg->read();
+            
+            
+            $this->config_set("user","username", "'".$user."'"); 
+            $this->config_set("user","password","'". $password."'"); 
+
+            //Webservices aktualisieren
+            $this->config_set("webservices","project", "'".$project_link."'"); 
+            $this->config_set("webservices","participants","'". $participant_link."'"); 
+        }
+
         public function GetConfig(){
             return parse_ini_file("lib/knk_config.ini");       
+        }
+
+        private function config_set($section, $key, $value) {
+            
+            $config_data = parse_ini_file("lib/knk_config.ini",TRUE);
+            $config_data[$section][$key] = $value;
+            $new_content = '';
+            foreach ($config_data as $section => $section_content) {
+                $section_content = array_map(function($value, $key) {
+                    return "$key=$value";
+                }, array_values($section_content), array_keys($section_content));
+                $section_content = implode("\n", $section_content);
+                $new_content .= "[$section]\n$section_content\n";
+            }
+            file_put_contents(plugin_dir_path( __FILE__ ).'\lib\knk_config.ini', $new_content);
         }
 
         //Diese Funktion modifiert die Config Datei
@@ -146,7 +175,8 @@
             $card .= '<h3>'.$project->Main_Title.'</h3>';
             $card .= '  <b>Author: </b>'.$project->Author_Name.'</br>
                         <b>ISBN: </b>'.$project->ISBN_13_Complete.'</br>
-                        <b>Genre: </b>'.$project->Genre_Description.'</br> <hr>';
+                        <b>Genre: </b>'.$project->Genre_Description.'</br>
+                        <b>Erscheinungstermin: </b>'. date("d.m.y",strtotime($project->Planned_Publication_Date)).'</br> <hr>';
             $card .= $this->SetParticipantList($participants);
             $card .='</div>';
 
@@ -167,13 +197,15 @@
             <tbody>   
             ';
             if(!empty($participants)){
+                $count=1;
                 foreach($participants as $participant){
                     //$participant_list .= '<b>'.$participant->Role_Description.': </b>'.$participant->Name.'<br>';
                     $participant_list .='<tr>
-                                            <th scope="row">1</th>
+                                            <th scope="row">'.$count.'</th>
                                             <td><b>'.$participant->Role_Description.'</b></td>
                                             <td>'.$participant->Name.'</td>
                                         </tr>';
+                    $count=$count + 1;
                 }
             }
 
@@ -189,9 +221,9 @@
                 $title=substr($project->Main_Title,0,50).' ...';
             }        
             return '<div class="col-md-3" id="cardformat" style="padding-bottom:10px; ">
-                        <div class="card"  style="width: 90%;">
+                        <div class="card"  style="width: 100%;">
                             <div class="card-body">
-                                <div style="height: 70px; width:100%; Color:#003FBE; border-bottom: 1px black;">
+                                <div style="height: 150px; width:100%; Color:#003FBE; background:#F5F5F5; text-align:center; padding:auto; border-bottom: 1px  black;">
                                     <h6 class="card-title">'.$title.'</h6>
                                 </div>  
                                 <p class="card-text">   
