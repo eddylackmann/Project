@@ -137,9 +137,12 @@
             $participants =  $this->GetParticipantsByProject($no);
             $card .= '<h3>'.$project->Main_Title.'</h3>';
             $card .= '  <b>Author: </b>'.$project->Author_Name.'</br>
+                        <b>Art: </b>'.$project->Item_Type_Code.' ('.$project->Item_Type_Description.')</br>
                         <b>ISBN: </b>'.$project->ISBN_13_Complete.'</br>
                         <b>Genre: </b>'.$project->Genre_Description.'</br>
-                        <b>Erscheinungstermin: </b>'. date("d.m.y",strtotime($project->Planned_Publication_Date)).'</br> <hr>';
+                        <b>Erscheinungstermin: </b>'. date("d.m.y",strtotime($project->Planned_Publication_Date)).'</br>
+                      
+                         <hr>';
             $card .= $this->SetParticipantList($participants);
             $card .='</div>';
 
@@ -184,19 +187,22 @@
                 $title=substr($project->Main_Title,0,50).' ...';
             }        
             return '<div class="col-md-3" id="cardformat" style="padding-bottom:10px; ">
-                        <div class="card"  style="width: 100%;">
+                        <div class="card"  style="width: 100%; ">
                             <div class="card-body">
                                 <div style="height: 150px; width:100%; Color:#003FBE; background:#F5F5F5; text-align:center; padding:auto; border-bottom: 1px  black;">
                                     <h6 class="card-title">'.$title.'</h6>
                                 </div>  
+                                <div style="height: 180px;>
                                 <p class="card-text">   
                                     <b>Author: </b>'.$project->Author_Name.'</br>
                                     <b>ISBN: </b>'.$project->ISBN_13_Complete.'</br>
-                                    <b>Genre: </b>'.$project->Genre_Description.'</br>       
+                                    <b>Genre: </b>'.$project->Genre_Description.'</br>    
+                                    <b>Art: </b>'.$project->Item_Type_Description.'</br>   
                                 </p>
+                                </div>
                                 <form>
                                     <input type="hidden" name="Project"  value="'.$project->No.'"/>
-                                    <input type="submit" class="btn btn-outline-dark btn-xs" value="Weiterlesen"/>
+                                    <input type="submit" class="btn btn-primary btn-xs" value="Weiterlesen"/>
                                 </form>
                             </div>
                         </div>
