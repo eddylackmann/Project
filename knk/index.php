@@ -19,7 +19,7 @@
 
         //Konstruktor
         function __constructor(){
-            $this->confg = new INI("lib/knk_config.ini");
+            //$this->confg = new INI("lib/knk_config.ini");
            
         }
 
@@ -27,24 +27,22 @@
                 *KONFIGURATION*
         *******************************/
         //Diese Funktion lies die Config datei und gibt es uns als Array zurück
-        public function UpdateConfig($user,$password,$project_link,$participant_link){
-           // $this->confg->read();
-            
-            
-            $this->config_set("user","username", "'".$user."'"); 
-            $this->config_set("user","password","'". $password."'"); 
-
-            //Webservices aktualisieren
-            $this->config_set("webservices","project", "'".$project_link."'"); 
-            $this->config_set("webservices","participants","'". $participant_link."'"); 
-        }
-
         public function GetConfig(){
             return parse_ini_file("lib/knk_config.ini");       
         }
+        
+        public function UpdateConfig($user,$password,$project_link,$participant_link){
+           // $this->confg->read();      
+            $this->config_set("user","username",$user); 
+            $this->config_set("user","password",var_dump($passwort)); 
 
+            //Webservices aktualisieren
+            $this->config_set("webservices","project", $project_link); 
+            $this->config_set("webservices","participants",$participant_link); 
+        }
+        
+        ////Diese Funktion modifiert die Config Datei
         private function config_set($section, $key, $value) {
-            
             $config_data = parse_ini_file("lib/knk_config.ini",TRUE);
             $config_data[$section][$key] = $value;
             $new_content = '';
@@ -56,41 +54,6 @@
                 $new_content .= "[$section]\n$section_content\n";
             }
             file_put_contents(plugin_dir_path( __FILE__ ).'\lib\knk_config.ini', $new_content);
-        }
-
-        //Diese Funktion modifiert die Config Datei
-        public function write_php_ini($array, $file){
-            $res = array();
-            foreach($array as $key => $val)
-            {
-                if(is_array($val))
-                {
-                    $res[] = "[$key]";
-                    foreach($val as $skey => $sval) $res[] = "$skey = ".(is_numeric($sval) ? $sval : '"'.$sval.'"');
-                }
-                else $res[] = "$key = ".(is_numeric($val) ? $val : '"'.$val.'"');
-            }
-            safefilerewrite($file, implode("\r\n", $res));
-        }
-
-        public function safefilerewrite($fileName, $dataToSave){
-           if ($fp = fopen($fileName, 'w'))
-            {
-                $startTime = microtime(TRUE);
-                do
-                {            $canWrite = flock($fp, LOCK_EX);
-                   // If lock not obtained sleep for 0 - 100 milliseconds, to avoid collision and CPU load
-                   if(!$canWrite) usleep(round(rand(0, 100)*1000));
-                } while ((!$canWrite)and((microtime(TRUE)-$startTime) < 5));
-        
-                //file was locked so now we can store information
-                if ($canWrite)
-                {            fwrite($fp, $dataToSave);
-                    flock($fp, LOCK_UN);
-                }
-                fclose($fp);
-            }
-        
         }
 
        /******************************* 

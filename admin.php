@@ -8,12 +8,12 @@
        
         
         $config= $knk->GetConfig();
-        if(isset($_POST['Save'])){
+        /*if(isset($_POST['Save'])){
             $knk->UpdateConfig($_POST['username'],
                                     $_POST['password'],
                                     $_POST['project_link'],
                                     $_POST['participant_link']);
-        }
+        }*/
         
     ?>
     <hr>
@@ -34,7 +34,7 @@
                 <div class="form-group" style="color:#003FBE;">
                     <input type="text" style="color:#003FBE;" class="form-control" name="project_link" placeholder="Projekt Webservices"  value="<?php echo  $config['project'];?>" required><br>
                     <input type="text" style="color:#003FBE;" class="form-control"  name="participant_link" placeholder= "Projekt Beteiligte Webservices"  value="<?php echo  $config['participants'];?>"required><br>
-                    <input type="text" style="color:#003FBE;" class="form-control" value="<?php echo  $config['content'];?>" placeholder="Projekt Content Webservices" required>
+                    
                 </div>
             </div>
           

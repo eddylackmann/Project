@@ -70,5 +70,17 @@ function __knkadmin(){
    include('admin.php');
 }
 
+if(isset($_POST['Save'])){
+    $knkLibrary->UpdateConfig($_POST['username'],
+                            $_POST['password'],
+                            $_POST['project_link'],
+                            $_POST['participant_link']);
+    add_action('admin_notices', '__notice_save');                        
+}
 
+function __notice_save(){
+    echo '<br><br><div class="alert alert-success">
+            <strong>Info!: </strong> Erfolgreich gespeichert.
+        </div>';
+}
 ?>
