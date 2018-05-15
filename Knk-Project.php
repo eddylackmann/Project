@@ -20,26 +20,28 @@ if(! defined('ABSPATH')){
 //import Knk Libraries
 require_once('knk/index.php');
 
-//Init KNK Library
+//KNK Library Initialisieren
 $knkLibrary = new KnkLibrary();
 
-//init plugin
+//Admin Page Erzeugen
 add_action("admin_menu","addmenuPage");
 
+//Shortcode Erzeugen
 add_shortcode('knk_project_grid','__getProjectGrid');
+
+//Komponenten Einbinden
 add_action('admin_enqueue_scripts', 'callback_for_setting_up_scripts');
 add_action('wp_enqueue_scripts', 'callback_for_setting_up');
 function callback_for_setting_up_scripts() {
-    wp_register_style( 'Bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' );
+    wp_register_style( 'Bootstrap', '/includes/css/bootstrap.min.css' );
     wp_enqueue_style( 'Bootstrap' );
-  
-    wp_enqueue_script( 'Bootstrap min', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ) );
+    wp_enqueue_script( 'Bootstrap min', '/includesjs/bootstrap.min.js', array( 'jquery' ) );
 }
 function callback_for_setting_up() {
-    wp_register_style( 'Bootstrap', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' );
+    wp_register_style( 'Bootstrap', '/includes/css/bootstrap.min.css' );
     wp_enqueue_style( 'Bootstrap' );
   
-    wp_enqueue_script( 'Bootstrap min', 'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js', array( 'jquery' ) );
+    wp_enqueue_script( 'Bootstrap min', '/includesjs/bootstrap.min.js', array( 'jquery' ) );
 }
 
 
@@ -57,15 +59,14 @@ function addmenuPage(){
                    4,
                    "Knk Project Admin",
                    "__Knkadmin");
-    
-    
+       
 }
- 
  
 
 function __getProjectGrid(){
     include('knk/grid.php');
 }
+
 function __knkadmin(){
    include('admin.php');
 }

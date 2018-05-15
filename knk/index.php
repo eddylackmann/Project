@@ -13,13 +13,13 @@
     require_once('lib/config.php'); 
     require_once('lib/NTLMSoapClient.php'); 
     require_once('lib/NTLMStream.php'); 
+
     // Knk Library Klasse hat alle Nötige Funktionen zum Lesen der Webservices und enthält weitere nötigen Tools.
     class knkLibrary{
         private $confg;
 
         //Konstruktor
         function __constructor(){
-            //$this->confg = new INI("lib/knk_config.ini");
            
         }
 
@@ -30,7 +30,7 @@
         public function GetConfig(){
             return parse_ini_file("lib/knk_config.ini");       
         }
-        
+        //Diese Funktion aktualisiert 
         public function UpdateConfig($user,$password,$project_link,$participant_link){
            // $this->confg->read();      
             $this->config_set("user","username",$user); 
@@ -59,6 +59,7 @@
        /******************************* 
                 *WEBSERVICES*
         *******************************/
+
         //Funktion holt alle Projekte aus KNK Verlag heraus 
         private function GetProjects(){
             stream_wrapper_unregister('http'); 
@@ -108,7 +109,7 @@
                     ); 
                 $WS = new NTLMSoapClient($link);
                 $result = $WS->ReadMultiple($params); 
-                $participants = $result->ReadMultiple_Result->knk_Project_Participant;  
+                $participants = $result->ReadMultiple_Result->Knk_Project_Participant;  
                 return $participants;          
             }else{
                 return NULL;
@@ -194,6 +195,7 @@
                                 </div>  
                                 <div style="height: 180px;>
                                 <p class="card-text">   
+                                    <br>
                                     <b>Author: </b>'.$project->Author_Name.'</br>
                                     <b>ISBN: </b>'.$project->ISBN_13_Complete.'</br>
                                     <b>Genre: </b>'.$project->Genre_Description.'</br>    
